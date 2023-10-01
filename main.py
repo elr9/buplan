@@ -3,15 +3,17 @@ from docx import Document
 import openai
 
 def generate_section_content(api_key, idea, section_name):
-    """Generate detailed content for a given section of the business plan."""
-    prompt = f"Provide a detailed {section_name.lower()} for a business plan based on the idea: {idea}"
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo",
-        prompt=prompt,
-        max_tokens=400,  # Adjust as needed
+    """Generate detailed content for a given section of the business plan using the gpt-3.5-turbo model."""
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": f"Provide a detailed {section_name.lower()} for a business plan based on the idea: {idea}"}
+    ]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
         api_key=api_key
     )
-    return response.choices[0].text.strip()
+    return response.choices[0].message['content'].strip()
 
 st.title("AI-Powered Business Plan Generator")
 
@@ -57,4 +59,3 @@ if st.button("Generate Business Plan"):
 
         # Provide download link in Streamlit
         st.markdown(f"[Download Business Plan](file://{doc_filename})")
-
